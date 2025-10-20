@@ -237,29 +237,18 @@ int main() {
     printf("Mat*V2 (0-9):\n");
     PrintVect(MatV2, 0, 10);
 
-    float X1[N], X1000[N];
-    int jacobi1 = Jacobi(MatDD, V3, X1, 1);
-    int jacobi1000 = Jacobi(MatDD, V3, X1000, 1000);
-    printf("Solución Jacobi MatDD*X=V3 (1 iter) (0-9):\n");
-    if(jacobi1) {
-        PrintVect(X1, 0, 10);
-        printf("Error %.6f\n", ResidualNorm(MatDD, X1, V3));
-    } else {
-        printf("No se puede aplicar Jacobi (no diagonal dominante)\n");
-    }
-    printf("Solución Jacobi MatDD*X=V3 (1000 iters) (0-9):\n");
-    if(jacobi1000) {
-        PrintVect(X1000, 0, 10);
-        printf("Error %.6f\n", ResidualNorm(MatDD, X1000, V3));
-    } else {
-        printf("No se puede aplicar Jacobi (no diagonal dominante)\n");
-    }
+	float solution_1000_iters[N];
+	Jacobi(MatDD, V3, solution_1000_iters, 1000);
+	printf("Els elements 0 a 9 de la solució (1000 iters) del sistema d'equacions són:");
+	PrintVect(solution_1000_iters, 0, 10);
 
-    float XMat[N];
-    int jacobiMat = Jacobi(Mat, V3, XMat, 1000);
-    if(!jacobiMat) {
-        printf("La matriz Mat no es diagonal dominante, no se puede aplicar Jacobi\n");
-    }
+	float solution_M[N];
+	if (Jacobi(Mat, V3, solution_M, 1000)) {
+    	printf("Els elements 0 a 9 de la solució (1000 iters) del sistema d'equacions són:\n");
+    	PrintVect(solution_M, 0, 10);
+	} else {
+    	printf("La matriu M no és diagonal dominant, no es pot aplicar Jacobi\n");
+	}
 
     return 0;
 }
