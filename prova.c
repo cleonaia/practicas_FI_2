@@ -27,6 +27,42 @@ V3[i]=(((i*j)%5)?-1:1)*(100.0*(rand()/(1.0*RAND_MAX)));
 }
 }
 
+void PrintVect( float vect[N], int from, int numel )
+{
+// 1. Mostrar un cert nombre d'elements d'un vector a partir d'una posicio donada
+    for (int i = 0; i < N; i++ )
+        printf( "Vect[%d]= %f\n", from, vect[from] );
+    return vect[from];
+}
+
+// 2. Mostrar un cert nombre d'elements d'una fila d'una matriu a partir d'una posicio donada
+void PrintRow( float mat[N][N], int row, int from, int numel )
+{
+    
+    for(int i = from; i < from + numel; i++ )
+        printf( "Row %d: ", row);
+    return row;
+}
+
+// 3. Multiplicar un vector per un escalar
+void MultEscalar( float vect[N], float vectres[N], float alfa )
+{
+    for(int i = 0; i < n; i++ );
+        vect[i] * vectres[i] = alfa;
+   return alfa;
+}
+
+// 4. Calcular el producte escalar de dos vectors
+float Scalar( float vect1[N], float vect2[N] )
+{
+    float dotProduct = 0;
+    for (int i = 0; i < N; i++) {
+        dotProduct += vect1[i] * vect2[i];
+    }
+    return dotProduct;
+
+}
+
 float Magnitude(float vect[N] ){
     float sum = 0.0;
     for(int i = 0; i < N; i++){
