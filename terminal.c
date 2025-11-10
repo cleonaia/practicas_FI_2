@@ -80,7 +80,7 @@ int Ortogonal(float vect1[N], float vect2[N]){
 
 void Projection(float vect1[N], float vect2[N], float vectres[N]){
     float dot_product = 0.0;
-    float norm2 = 0.0; // Magnitude squared of vect2
+    float norm2 = 0.0; 
     
     for(int i = 0; i < N; i++){
         dot_product += vect1[i] * vect2[i];
@@ -160,7 +160,7 @@ float ResidualNorm(float M[N][N], float x[N], float b[N]) {
 
 int Jacobi( float M[N][N], float vect[N], float vectres[N], unsigned iter ) {
     float x_old[N], x_new[N];
-    // Inicialización: x_old = 0
+    // Inicia: x_old = 0
     for(int i = 0; i < N; i++) x_old[i] = 0.0f;
 
     for(unsigned k = 0; k < iter; k++) {
@@ -169,13 +169,13 @@ int Jacobi( float M[N][N], float vect[N], float vectres[N], unsigned iter ) {
             for(int j = 0; j < N; j++) {
                 if(j != i) sum += M[i][j] * x_old[j];
             }
-            if(fabs(M[i][i]) < 1e-8) return 0; // No diagonal dominante o singular
+            if(fabs(M[i][i]) < 1e-8) return 0; // No diagonal dominant o singular
             x_new[i] = (vect[i] - sum) / M[i][i];
         }
-        // Copiar x_new a x_old para la siguiente iteración
+        // Copiar x_new a x_old per la següent iteració
         for(int i = 0; i < N; i++) x_old[i] = x_new[i];
     }
-    // Copiar resultado final a vectres
+    // Copiar el resultat final a vectres
     for(int i = 0; i < N; i++) vectres[i] = x_old[i];
     return 1;
 }
@@ -252,4 +252,3 @@ int main() {
 
     return 0;
 }
-
