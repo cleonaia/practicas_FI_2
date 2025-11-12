@@ -1,0 +1,7 @@
+# Compiled binaries
+terminal
+co
+prova
+*.o
+*.out
+a.out
