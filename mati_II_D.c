@@ -307,7 +307,7 @@ int main(void){
         float bound1000  = (theta/(1.0f - theta)) * error1000;
 
         /* Punt extra */
-        printf("\n======================== Punt extra — qualitat Jacobi ========================\n");
+        printf("\n======================== Punt extra ========================\n");
         printf("||G||_inf = %.6f\n", theta);
         printf("  (1 iter)    ||r||2 = %.6f    rel(||r||2) = %.6f    cota_inf(error) ≤ %.6f\n",
                r2_1,    rel2_1,    bound1);
@@ -337,6 +337,6 @@ Punt extra:
      G = −D^{-1}(L+U), θ = ||G||inf = max_i Σ{j≠i} |a_ij|/|a_ii|.
      Si θ < 1, llavors ||x* − x(k)||_inf ≤ (θ/(1−θ)) · ||x(k+1) − x(k)||_inf.
 •⁠  ⁠L’error que es mostra per a l’apartat J s’ha calculat com la norma L2 nomésdels 10 primers elements.
-•⁠  ⁠Hem fet una complicació diferent per evitar diferències:
-  gcc main.c -O0 -lm -o main
+•⁠  !! IMPORTANT !! ⁠Hem fet una complicació diferent per evitar diferències:
+  gcc mati_II_D.c -O0 -lm -o mati_II_D
 */
