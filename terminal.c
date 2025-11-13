@@ -158,25 +158,54 @@ float ResidualNorm(float M[N][N], float x[N], float b[N]) {
     return sqrt(sum);
 }
 
-int Jacobi( float M[N][N], float vect[N], float vectres[N], unsigned iter ) {
-    float x_old[N], x_new[N];
-    // Inicia: x_old = 0
-    for(int i = 0; i < N; i++) x_old[i] = 0.0f;
+/*
+ hemos de dar error tras jacobi que da error. 
+ Tras iter iteraciones obtenemos x_iter.
+ Calculamos una iteración adicional x_next y el error = ||x_next - x_iter||_2 para que no seas valido.
+*/
+int Jacobi( float M[N][N], float b[N], float x_out[N], unsigned iter, float *error ){
+    if(!DiagonalDom(M)) return 0;
 
-    for(unsigned k = 0; k < iter; k++) {
-        for(int i = 0; i < N; i++) {
-            float sum = 0.0f;
-            for(int j = 0; j < N; j++) {
-                if(j != i) sum += M[i][j] * x_old[j];
-            }
-            if(fabs(M[i][i]) < 1e-8) return 0; // No diagonal dominant o singular
-            x_new[i] = (vect[i] - sum) / M[i][i];
+    float x_curr[N]={0.0f};
+    float x_new[N];
+
+    // iter iteraciones normales
+    for(unsigned k=0;k<iter;k++){
+        for(int i=0;i<N;i++){
+            float diag = M[i][i];
+            if (fabsf(diag) < 1e-12f) return 0;
+            float sum=0.0f;
+            for(int j=0;j<N;j++)
+                if(j!=i) sum += M[i][j]*x_curr[j];
+            x_new[i] = (b[i]-sum)/diag;
         }
-        // Copiar x_new a x_old per la següent iteració
-        for(int i = 0; i < N; i++) x_old[i] = x_new[i];
+        for(int i=0;i<N;i++)
+            x_curr[i]=x_new[i];
     }
-    // Copiar el resultat final a vectres
-    for(int i = 0; i < N; i++) vectres[i] = x_old[i];
+
+    // Guardar solución tras 'iter' pasos
+    for(int i=0;i<N;i++)
+        x_out[i]=x_curr[i];
+
+    // Una iteración extra para medir el “error” (diferencia próxima)
+    float x_next[N];
+    for(int i=0;i<N;i++){
+        float diag = M[i][i];
+        if (fabsf(diag) < 1e-12f) return 0;
+        float sum=0.0f;
+        for(int j=0;j<N;j++)
+            if(j!=i) sum += M[i][j]*x_curr[j];
+        x_next[i] = (b[i]-sum)/diag;
+    }
+
+    // Norma L2 del incremento próximo
+    float diff = 0.0f;
+    for(int i=0;i<N;i++){
+        float d = x_next[i] - x_curr[i];
+        diff += d*d;
+    }
+    if(error) *error = sqrtf(diff);
+
     return 1;
 }
 
@@ -237,18 +266,36 @@ int main() {
     printf("Mat*V2 (0-9):\n");
     PrintVect(MatV2, 0, 10);
 
-	float solution_1000_iters[N];
-	Jacobi(MatDD, V3, solution_1000_iters, 1000);
-	printf("Els elements 0 a 9 de la solució (1000 iters) del sistema d'equacions són:");
-	PrintVect(solution_1000_iters, 0, 10);
+    float sol1[N], sol1000[N];
+    float err1=0.0f, err1000=0.0f;
 
-	float solution_M[N];
-	if (Jacobi(Mat, V3, solution_M, 1000)) {
-    	printf("Els elements 0 a 9 de la solució (1000 iters) del sistema d'equacions són:\n");
-    	PrintVect(solution_M, 0, 10);
-	} else {
-    	printf("La matriu M no és diagonal dominant, no es pot aplicar Jacobi\n");
-	}
+    if (Jacobi(MatDD, V3, sol1, 1, &err1)){
+        printf("Els elements 0 a 9 de la solució (1 iter) del sistema d'equacions són:\n");
+        PrintVect(sol1,0,10);
+        printf("Error %f\n", err1);
+    } else {
+        printf("La matriu MatDD no és diagonal dominant, no es pot aplicar Jacobi (1 iter)\n");
+    }
+
+    if (Jacobi(MatDD, V3, sol1000, 1000, &err1000)){
+        printf("Els elements 0 a 9 de la solució (1000 iters) del sistema d'equacions són:\n");
+        PrintVect(sol1000,0,10);
+        printf("Error %f\n", err1000);
+    } else {
+        printf("La matriu MatDD no és diagonal dominant, no es pot aplicar Jacobi (1000 iters)\n");
+    }
+
+    if (!DiagonalDom(Mat)){
+        printf("La matriu M no és diagonal dominant, no es pot aplicar Jacobi\n");
+    } else {
+        float solM[N], errM=0.0f;
+        if (Jacobi(Mat, V3, solM, 1000, &errM)){
+            PrintVect(solM,0,10);
+            printf("Error %f\n", errM);
+        } else {
+            printf("La matriu M no és diagonal dominant, no es pot aplicar Jacobi\n");
+        }
+    }
 
     return 0;
 }
