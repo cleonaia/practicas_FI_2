@@ -10,71 +10,72 @@ float V1[N], V2[N], V3[N], V4[N];
 
 /* Inicialització */
 void InitData(){
-    int i,j;
-    srand(221122);
-    for( i = 0; i < N; i++ )
-        for( j = 0; j < N; j++ ){
-            Mat[i][j]=(((i*j)%3)?-1:1)(100.0f(rand()/(1.0f*RAND_MAX)));
-            if ( (abs(i - j) <= 3) && (i != j))
-                MatDD[i][j] = (((i*j)%3) ? -1 : 1)*(rand()/(1.0f*RAND_MAX));
-            else if ( i == j )
-                MatDD[i][j]=(((i*j)%3)?-1:1)(10000.0f(rand()/(1.0f*RAND_MAX)));
-            else MatDD[i][j] = 0.0f;
-        }
-    for( i = 0; i < N; i++ ){
-        V1[i]=(i<N/2)?(((i*j)%3)?-1:1)(100.0f(rand()/(1.0f*RAND_MAX))):0.0f;
-        V2[i]=(i>=N/2)?(((i*j)%3)?-1:1)(100.0f(rand()/(1.0f*RAND_MAX))):0.0f;
-        V3[i]=(((i*j)%5)?-1:1)(100.0f(rand()/(1.0f*RAND_MAX)));
-    }
+int i,j;
+srand(221122);
+for( i = 0; i < N; i++ )
+for( j = 0; j < N; j++ ){
+Mat[i][j]=(((i*j)%3)?-1:1)*(100.0*(rand()/(1.0*RAND_MAX)));
+if ( (abs(i - j) <= 3) && (i != j))
+MatDD[i][j] = (((i*j)%3) ? -1 : 1)*(rand()/(1.0*RAND_MAX));
+else if ( i == j )
+MatDD[i][j]=(((i*j)%3)?-1:1)*(10000.0*(rand()/(1.0*RAND_MAX)));
+else MatDD[i][j] = 0.0;
+}
+for( i = 0; i < N; i++ ){
+V1[i]=(i<N/2)?(((i*j)%3)?-1:1)*(100.0*(rand()/(1.0*RAND_MAX))):0.0;
+V2[i]=(i>=N/2)?(((i*j)%3)?-1:1)*(100.0*(rand()/(1.0*RAND_MAX))):0.0;
+V3[i]=(((i*j)%5)?-1:1)*(100.0*(rand()/(1.0*RAND_MAX)));
+}
 }
 
 /* Impressió neta */
 void PrintVect( float vect[N], int from, int numel ){
-    for(int i = from; i < from + numel && i < N; i++)
-        printf("%f ", vect[i]);
-    printf("\n");
+    for(int i = from; i < from + numel && i < N; i++) /*Recorrem el vector començant des de from fins a numel*/
+        printf("%f ", vect[i]);/*Mostrem el resultat separat per espais*/
+    printf("\n");/*Saltem a la linia següent*/
 }
 void PrintRow( float mat[N][N], int row, int from, int numel ){
-    for(int i = from; i < from + numel && i < N; i++)
-        printf("%f ", mat[row][i]);
+    for(int i = from; i < from + numel && i < N; i++)/*Recorrem la matriu desde la columna from fins a numel*/
+        printf("%f ", mat[row][i]);/*Mostrem l'element de la matriu amb posició (row,i)*/
     printf("\n");
 }
 
 /* Operacions vectorials/matricials */
 void MultEscalar( float vect[N], float vectres[N], float alfa ){
-    for(int i=0;i<N;i++) vectres[i] = vect[i]*alfa;
+    for(int i=0;i<N;i++) vectres[i] = vect[i]*alfa;/*Multiplica els elements d'un vector per un nombre escalar i guarda el resultat en vectres*/
 }
 float Scalar( float vect1[N], float vect2[N] ){
     float s = 0.0f;
-    for(int i=0;i<N;i++) s += vect1[i]*vect2[i];
+    for(int i=0;i<N;i++) s += vect1[i]*vect2[i];/*Recor els elements del vector i suma a "s" el resultat de la multiplicació entre vect1 i vect2*/
     return s;
 }
 float Magnitude( float vect[N] ){
-    return sqrtf(Scalar(vect,vect));
+    return sqrtf(Scalar(vect,vect));/*Primer calcula el producte escalar amb ell mateix (s'eleva al quadrat) i després es calcula l'arrel quadrada de la suma*/
 }
 int Ortogonal( float vect1[N], float vect2[N] ){
-    return (fabsf(Scalar(vect1,vect2)) < 1e-6f) ? 1 : 0;
+    return (fabsf(Scalar(vect1,vect2)) < 1e-6f) ? 1 : 0; /*Primer calcula el producte escalar dels dos vectors, després agafa el valor absolut del resultat*/
+                                                        /*Si el resultat és menor de 1^-6 els vectors es consideren ortogonals, si no es retorna 0*/
 }
 /* Projecció segons enunciat: (u·v / |v|) * v */
 void Projection( float vect1[N], float vect2[N], float vectres[N] ){
-    float dot = Scalar(vect1,vect2);
-    float mag = Magnitude(vect2);
-    if (mag < 1e-12f){
-        for(int i=0;i<N;i++) vectres[i]=0.0f;
+    float dot = Scalar(vect1,vect2);/*Apliquem la funció Scalar per calcular el producte escalar de vect1 i vect2*/
+    float mag = Magnitude(vect2);/*Apliquem la funció Magnitude per calcular la magnitud del vect2*/
+    if (mag < 1e-12f){/*Mirem si la magnitud és menor a 1^-12*/
+        for(int i=0;i<N;i++) vectres[i]=0.0f;/*Si es compleix no es pot per la projecció, així que posa tots els elements de vectres a 0*/
         return;
     }
-    float factor = dot / mag;
+    float factor = dot / mag;/*Calcula el coeficient escalar de la projecció*/
     for(int i=0;i<N;i++)
-        vectres[i] = factor * vect2[i];
+        vectres[i] = factor * vect2[i];/*Multiplica cada element de vect2 per el factor i desa el resultat a vectres*/
 }
 
 /* Normes de matriu */
 float Infininorm( float M[N][N] ){
     float maxv = 0.0f;
-    for(int i=0;i<N;i++){
+    for(int i=0;i<N;i++){/*Recorre la fila i suma el valor absolut de tots els elements*/
         float sum=0.0f;
         for(int j=0;j<N;j++) sum += fabsf(M[i][j]);
-        if(sum > maxv) maxv = sum;
+        if(sum > maxv) maxv = sum;/*Comprova si la suma és més gran que maxv, si ho és actualitza maxv*/
     }
     return maxv;
 }
@@ -82,8 +83,8 @@ float NormOne( float M[N][N] ){
     float maxc = 0.0f;
     for(int j=0;j<N;j++){
         float sum=0.0f;
-        for(int i=0;i<N;i++) sum += fabsf(M[i][j]);
-        if(sum > maxc) maxc = sum;
+        for(int i=0;i<N;i++) sum += fabsf(M[i][j]);/*Per cada columna, suma el valor absolut de tots els elements*/
+        if(sum > maxc) maxc = sum;/*Comprova si la suma és més gran que maxc, si sí ho és actualitza maxc*/
     }
     return maxc;
 }
@@ -92,20 +93,20 @@ float NormFrobenius( float M[N][N] ){
     float acc = 0.0f;
     for(int i=0;i<N;i++)
         for(int j=0;j<N;j++)
-            acc += M[i][j]*M[i][j];
-    return sqrtf(acc);
+            acc += M[i][j]*M[i][j];/*Suma el quadrat de cada element i ho desa en acc*/
+    return sqrtf(acc);/*Retorna la arrel quadrada de la suma*/
 }
 
 /* Diagonal dominant */
 int DiagonalDom( float M[N][N] ){
     for(int i=0;i<N;i++){
-        float diag = fabsf(M[i][i]);
+        float diag = fabsf(M[i][i]);/*Guarda el valor absolut de l’element diagonal de la fila*/
         float sum = 0.0f;
         for(int j=0;j<N;j++)
-            if(j!=i) sum += fabsf(M[i][j]);
-        if(diag < sum) return 0;
+            if(j!=i) sum += fabsf(M[i][j]);/*Suma a sum tots els altres elements de la fila (fora de la diagonal)*/
+        if(diag < sum) return 0;/*Comprova si diag < sum, si és cert, la fila no és diagonalment dominant, i retorna 0*/
     }
-    return 1;
+    return 1;/*Si totes les files ho compleixen retorna 1*/
 }
 
 /* Matriu * vector */
@@ -113,34 +114,34 @@ void Matriu_x_Vector( float M[N][N], float vect[N], float vectres[N] ){
     for(int i=0;i<N;i++){
         float acc=0.0f;
         for(int j=0;j<N;j++)
-            acc += M[i][j]*vect[j];
-        vectres[i]=acc;
+            acc += M[i][j]*vect[j];/*Per cada columna j, multiplica l’element de la matriu M[i][j] pel element del vector vect[j] i suma el resultat a acc*/
+        vectres[i]=acc;/*Desa el resultat total de la fila a Vectres*/
     }
 }
 
 /* Jacobi bàsic (una iteració a partir de x_in) */
 int JacobiOneIteration(float M[N][N], float b[N], float x_in[N], float x_out[N]){
-    if(!DiagonalDom(M)) return 0;
+    if(!DiagonalDom(M)) return 0;/*Comprova si la matriu M és diagonalment dominant amb DiagonalDom(M), si ho és retorna 0*/
     for(int i=0;i<N;i++){
-        float diag = M[i][i];
-        if (fabsf(diag) < 1e-12f) return 0;
+        float diag = M[i][i];/*Si la diagonal és gairebé zero, retorna 0 per evitar divisió per zero.*/
+        if (fabsf(diag) < 1e-12f) return 0;/*Calcula la suma dels productes de la fila amb els valors actuals de x_in, excloent la diagonal*/
         float sum=0.0f;
         for(int j=0;j<N;j++)
             if(j!=i) sum += M[i][j]*x_in[j];
-        x_out[i] = (b[i]-sum)/diag;
+        x_out[i] = (b[i]-sum)/diag;/*Actualitza el vector de sortida*/
     }
-    return 1;
+    return 1;/*Retorna 1 si tot s'ha fet correctament*/
 }
 
 /* Jacobi (iters) des de x=0 */
 int JacobiIter(float M[N][N], float b[N], unsigned iters, float x_out[N]){
-    if(!DiagonalDom(M)) return 0;
+    if(!DiagonalDom(M)) return 0;/*La matriu M ha de ser diagonalment dominant, si no ho és retorna 0*/
     float x_curr[N]={0.0f};
     float x_next[N];
-    for(unsigned k=0;k<iters;k++){
+    for(unsigned k=0;k<iters;k++){/*Cada iteració crida JacobiOneIteration per calcular el següent vector aproximat x_next*/
         if(!JacobiOneIteration(M,b,x_curr,x_next)) return 0;
-        for(int i=0;i<N;i++) x_curr[i]=x_next[i];
-    }
+        for(int i=0;i<N;i++) x_curr[i]=x_next[i];/*Actualitza x_curr amb els nous valors*/
+    }/*Si alguna iteració falla (per exemple, matriu no diagonalment dominant o diagonal nul·la), retorna 0*/
     for(int i=0;i<N;i++) x_out[i]=x_curr[i];
     return 1;
 }
@@ -149,36 +150,36 @@ int JacobiIter(float M[N][N], float b[N], unsigned iters, float x_out[N]){
 float DiffL2_all(const float a[N], const float b[N]){
     float acc = 0.0f;
     for (int i = 0; i < N; i++){
-        float d = a[i] - b[i];
-        acc += d * d;
+        float d = a[i] - b[i];/*Calcula la diferència element a element.*/
+        acc += d * d;/*Suma el quadrat de la diferència*/
     }
-    return sqrtf(acc);
+    return sqrtf(acc);/*Retrorna l'arrel quadrada de la suma*/
 }
 
 /* Punt Extra */
 void ResidualVec(float M[N][N], float x[N], float b[N], float r[N]){
     for(int i=0;i<N;i++){
         float acc=0.0f;
-        for(int j=0;j<N;j++) acc += M[i][j]*x[j];
-        r[i] = acc - b[i];
+        for(int j=0;j<N;j++) acc += M[i][j]*x[j];/*Calcula el producte de la fila per el vector x*/
+        r[i] = acc - b[i];/*Calcula el residu de la fila i restant el vector b*/
     }
 }
 float Vector2Norm(float v[N]){
-    double acc=0.0;
-    for(int i=0;i<N;i++) acc += (double)v[i]*(double)v[i];
-    return (float)sqrt(acc);
+    double acc=0.0;/*Inicialitza un acumulador acc = 0.0 de tipus double per acumular més precisió*/
+    for(int i=0;i<N;i++) acc += (double)v[i]*(double)v[i];/*Recorre tots els elements del vector i suma el quadrat de cada element*/
+    return (float)sqrt(acc);/*Retorna l’arrel quadrada de la suma com a float*/
 }
 float JacobiThetaInf(float A[N][N]){
     float theta = 0.0f;
     for(int i=0;i<N;i++){
-        float diag = fabsf(A[i][i]);
-        if (diag < 1e-20f) return 1.0f;
+        float diag = fabsf(A[i][i]);/*Guarda l’element diagonal de la fila*/
+        if (diag < 1e-20f) return 1.0f;/*Si diag és gairebé zero, retorna 1.0f immediatament per indicar que la convergència podria fallar*/
         float rowSum = 0.0f;
-        for(int j=0;j<N;j++) if (j!=i) rowSum += fabsf(A[i][j]);
-        float val = rowSum / diag;
-        if (val > theta) theta = val;
+        for(int j=0;j<N;j++) if (j!=i) rowSum += fabsf(A[i][j]);/*Calcula la suma dels valors absoluts de tots els altres elements de la fila (fora de la diagonal)*/
+        float val = rowSum / diag;/*Calcula val*/
+        if (val > theta) theta = val;/*Actualitza theta si val és més gran*/
     }
-    if (theta >= 1.0f) theta = 0.999999f; /* evitar div. per zero a la cota */
+    if (theta >= 1.0f) theta = 0.999999f; /*Evitem dividir per zero*/
     return theta;
 }
 
@@ -337,5 +338,5 @@ Punt extra:
      Si θ < 1, llavors ||x* − x(k)||_inf ≤ (θ/(1−θ)) · ||x(k+1) − x(k)||_inf.
 •⁠  ⁠L’error que es mostra per a l’apartat J s’ha calculat com la norma L2 nomésdels 10 primers elements.
 •⁠  ⁠Hem fet una complicació diferent per evitar diferències:
-  gcc main.c -O0 -lm
+  gcc main.c -O0 -lm -o main
 */
